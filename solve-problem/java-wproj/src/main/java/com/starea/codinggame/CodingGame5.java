@@ -1,4 +1,4 @@
-package com.starea;
+package com.starea.codinggame;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,3 +1,5 @@
+package com.starea.adventofcode;
+
 import java.util.Objects;
 import java.util.Scanner;
 
