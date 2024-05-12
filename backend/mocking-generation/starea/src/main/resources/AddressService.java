@@ -3,6 +3,8 @@ public class AddressService {
     @Inject
     private AddressDao addrDao;
 
+    private static final String STATIC_FIELD = "static field";
+
     public Address create(Address address) {
         return addrDao.create(address);
     }

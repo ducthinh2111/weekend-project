@@ -12,13 +12,13 @@ import java.nio.file.Paths;
  */
 public class App {
 
-    private static final String FILE_PATH = "src/main/resources/AddressService.txt";
+    private static final String FILE_PATH = "src/main/resources/AddressService.java";
 
     public static void main(String[] args) throws Exception {
 
         CompilationUnit cu = StaticJavaParser
                 .parse(Files.newInputStream(Paths.get(FILE_PATH)));
-        VoidVisitor<Void> methodNameVisitor = new MethodNamePrinter();
+        VoidVisitor<Void> methodNameVisitor = new GenerateMockVisitor();
         methodNameVisitor.visit(cu, null);
     }
 }
