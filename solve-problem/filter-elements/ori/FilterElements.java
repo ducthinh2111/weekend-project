@@ -1,10 +1,24 @@
+package ori;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class NganFilterElements {
-    public static void main(String[] args) {
-        filter(List.of(4,5,2,5,4,3,1,3,4), 2);
+public class FilterElements {
+    public static void main(String[] args) throws Exception {
+        /*Scanner scanner = new Scanner(System.in);
+        while (scanner.hasNext()) {
+            int k = Integer.parseInt(args[0].split(" ")[1]);
+            List<Integer> array = Arrays.stream(args[i+1].split(" "))
+                    .map(Integer::parseInt).collect(Collectors.toList());
+            filter(array, k);
+        }
+        for (int i = 0; i < args.length; i+=2) {
+            int k = Integer.parseInt(args[0].split(" ")[1]);
+            List<Integer> array = Arrays.stream(args[i+1].split(" "))
+                    .map(Integer::parseInt).collect(Collectors.toList());
+            filter(array, k);
+        }*/
     }
 
     private static void filter(List<Integer> input, int k) {
