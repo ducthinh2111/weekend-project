@@ -5,7 +5,7 @@ import java.util.*;
 
 public class SummationTreePath {
     public static void main(String[] args) throws Exception {
-        File f = new File("solve-problem/hacktree/ngan/input.txt");
+        File f = new File("solve-problem/hacktree/ngan/input3.txt");
         Scanner scanner = new Scanner(f);
         List<Integer> cost = new ArrayList<>();
         List<Map.Entry<Integer, Integer>> connections = new ArrayList<>();
@@ -43,7 +43,17 @@ public class SummationTreePath {
         Node parent = new Node(1, cost.get(0));
         buildTree(parent, connections, cost);
         List<List<Node>> result = parent.possiblePaths();
+        printPossiblePath(result);
         count(result, k);
+    }
+
+    private static void printPossiblePath(List<List<Node>> result) {
+        System.out.println("===== possible paths ======");
+        result.forEach(i -> {
+            i.forEach(e -> System.out.print(e.getNum() + ","));
+            System.out.println();
+        });
+        System.out.println("===========================");
     }
 
     private static void count(List<List<Node>> nodes, int k) {

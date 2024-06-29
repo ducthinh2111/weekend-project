@@ -31,22 +31,24 @@ public class Node {
         List<Node> path = new ArrayList<>();
         path.add(this);
         result.add(path);
-        result.addAll(possiblePaths(path, this));
-        return result.stream().distinct().collect(Collectors.toList());
+        result.addAll(possiblePaths(path, this, false));
+        return result;
     }
 
-    private List<List<Node>> possiblePaths(List<Node> path, Node node) {
+    private List<List<Node>> possiblePaths(List<Node> path, Node node, boolean withoutRoot) {
         List<List<Node>> result = new ArrayList<>();
         if (node.children.isEmpty()){
             return result;
         }
         for (Node child : node.children) {
-            result.add(List.of(child));
+            if (!withoutRoot) {
+                result.add(List.of(child));
+            }
             List<Node> extraPath = new ArrayList<>(path);
             extraPath.add(child);
             result.add(extraPath);
-            result.addAll(possiblePaths(extraPath, child));
-            result.addAll(possiblePaths(new ArrayList<>(List.of(child)), child));
+            result.addAll(possiblePaths(extraPath, child, false));
+            result.addAll(possiblePaths(new ArrayList<>(List.of(child)), child, true));
         }
         return result;
     }
