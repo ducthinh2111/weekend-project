@@ -88,16 +88,14 @@ public class Tree {
     }
 
     int walk(Nut t, int pre, String ap, int[] cost, int k, Map<String, Boolean> m) {
-        int sum = 0;
-        int mod = (pre + cost[t.num]) % k;
         String nap = ap+t.num;
         //System.out.println("at "+t.num+": mod="+mod+" ap="+nap);
-        if (mod == 0) {
-            if (m.put(nap, true) == null)
-                sum++;
-            else
-                return 0;
-        }
+        if (m.put(nap, true) != null)
+            return 0;
+        int sum = 0;
+        int mod = (pre + cost[t.num]) % k;
+        if (mod == 0)
+            sum++;
         for (int i = 0; i < t.subs.length; i++) 
             sum += walk(t.subs[i], mod, nap, cost, k, m) + walk(t.subs[i], 0, "", cost, k, m);
         return sum;
