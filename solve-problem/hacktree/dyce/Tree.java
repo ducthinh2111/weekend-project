@@ -33,8 +33,8 @@ public class Tree {
             links[gi++] = link;
         }
         Nut tree = grow(links);
-        tree.print("", cost);
-        return walk(tree, 0, cost, k);
+        //tree.print("", cost);
+        return walk(tree, 0, "", cost, k, new HashMap<>());
     }
 
     Nut grow(int[][] links) {
@@ -87,17 +87,17 @@ public class Tree {
         return new Dto(loTrim, arrTrim);
     }
 
-    int walk(Nut t, int pre, int[] cost, int k) {
+    int walk(Nut t, int pre, String ap, int[] cost, int k, Map<String, Boolean> m) {
+        String nap = ap+t.num;
+        //System.out.println("at "+t.num+": mod="+mod+" ap="+nap);
+        if (m.put(nap, true) != null)
+            return 0;
         int sum = 0;
-        int mod = pre + cost[t.num];
-        mod = mod % k;
-        //int mod = (pre + cost[t.num]) % k;
-        System.out.println("@"+t.num+" : val="+cost[t.num]+" pre="+pre+" k="+k+" mod="+mod);
+        int mod = (pre + cost[t.num]) % k;
         if (mod == 0)
             sum++;
-        mod = pre + cost[t.num];
         for (int i = 0; i < t.subs.length; i++) 
-            sum += walk(t.subs[i], mod, cost, k) + walk(t.subs[i], 0, cost, k);
+            sum += walk(t.subs[i], mod, nap, cost, k, m) + walk(t.subs[i], 0, "", cost, k, m);
         return sum;
     }
 
