@@ -7,6 +7,7 @@ import java.util.stream.IntStream;
 import static java.util.stream.Collectors.toList;
 
 public class HackTree {
+
     private static int countVerticalPaths(List<Integer> cost,
                                           List<Integer> edgeFrom,
                                           List<Integer> edgeTo,
@@ -25,7 +26,7 @@ public class HackTree {
                                 List<Integer> costs,
                                 int k) {
 
-        Stack<Integer> parents = new Stack<>();
+        Queue<Integer> parents = new LinkedList<>();
         List<Integer> checkedConnections = new ArrayList<>();
         parents.add(1);
         int count = 0;
@@ -33,7 +34,7 @@ public class HackTree {
 
         while (!parents.isEmpty()) {
 
-            Integer parent = parents.pop();
+            Integer parent = parents.poll();
 
             List<Integer> children = new ArrayList<>();
             for (int i = 0; i < costs.size() - 1; i++) {
