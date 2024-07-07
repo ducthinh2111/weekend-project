@@ -8,76 +8,72 @@ import static java.util.stream.Collectors.toList;
 
 public class HackTree {
     private static int countVerticalPaths(List<Integer> cost,
-                                          int edgeNodes,
                                           List<Integer> edgeFrom,
                                           List<Integer> edgeTo,
                                           int k) {
-
-        Map<Integer, List<Integer>> connection = new HashMap<>();
-        List<Integer> goneThoughEdgeIndex = new ArrayList<>();
-        List<Long> costPath = new ArrayList<>();
-
         int count = 0;
         for (Integer c : cost) {
             if (c % k == 0) {
                 count++;
             }
         }
-        return count + traverse(1,
-                edgeFrom, edgeTo, edgeNodes - 1, connection, goneThoughEdgeIndex, cost, costPath, 0, k);
+        return count + traverse(edgeFrom, edgeTo, cost, k);
     }
 
-    private static int traverse(Integer parent,
-                                 List<Integer> edgeFrom,
-                                 List<Integer> edgeTo,
-                                 int edges,
-                                 Map<Integer, List<Integer>> connection,
-                                 List<Integer> goneThoughEdgeIndex,
-                                 List<Integer> costs,
-                                 List<Long> costPath,
-                                int deep,
+    private static int traverse(List<Integer> edgeFrom,
+                                List<Integer> edgeTo,
+                                List<Integer> costs,
                                 int k) {
 
-        for (int i = 0; i < edges; i++) {
-            if (goneThoughEdgeIndex.contains(i)) continue;
+        Stack<Integer> parents = new Stack<>();
+        List<Integer> checkedConnections = new ArrayList<>();
+        parents.add(1);
+        int count = 0;
+        Map<Integer, List<Long>> costStorage = new HashMap<>();
 
-            if (Objects.equals(edgeFrom.get(i), parent)) {
-                if (!connection.containsKey(edgeFrom.get(i))) {
-                    connection.put(edgeFrom.get(i), new ArrayList<>());
+        while (!parents.isEmpty()) {
+
+            Integer parent = parents.pop();
+
+            List<Integer> children = new ArrayList<>();
+            for (int i = 0; i < costs.size() - 1; i++) {
+                if (checkedConnections.contains(i)) continue;
+
+                if (Objects.equals(edgeFrom.get(i), parent)) {
+                    children.add(edgeTo.get(i));
+                    checkedConnections.add(i);
                 }
-                connection.get(edgeFrom.get(i)).add(edgeTo.get(i));
-                goneThoughEdgeIndex.add(i);
+
+                if (Objects.equals(edgeTo.get(i), parent)) {
+                    children.add(edgeFrom.get(i));
+                    checkedConnections.add(i);
+                }
             }
 
-            if (Objects.equals(edgeTo.get(i), parent)) {
-                if (!connection.containsKey(edgeTo.get(i))) {
-                    connection.put(edgeTo.get(i), new ArrayList<>());
-                }
-                connection.get(edgeTo.get(i)).add(edgeFrom.get(i));
-                goneThoughEdgeIndex.add(i);
-            }
-        }
+            for (Integer child : children) {
+                long childCost = costs.get(child - 1).longValue();
 
-        List<Integer> children = connection.get(parent);
-        if (Objects.isNull(children)) {
-            int count = 0;
-            for (Long calculatedCost : costPath) {
-                if (calculatedCost % k == 0) {
+                List<Long> childCosts = new ArrayList<>();
+
+                long costFromParent = childCost + costs.get(parent - 1).longValue();
+                if (costFromParent % k == 0) {
                     count++;
                 }
-            }
-            return count;
-        }
+                childCosts.add(costFromParent);
 
-        int count = 0;
-        for (Integer child : connection.get(parent)) {
-            long cost = costs.get(child - 1).longValue();
-            List<Long> clonedCostPath = new ArrayList<>(costPath);
-            clonedCostPath.add(cost + costs.get(parent - 1).longValue());
-            for (int i = costPath.size() - deep; i < costPath.size(); i++) {
-                clonedCostPath.add(cost + costPath.get(i));
+                if (costStorage.containsKey(parent)) {
+                    List<Long> ancestorCosts = costStorage.get(parent);
+                    for (Long ancestorCost : ancestorCosts) {
+                        long costFromAncestors = childCost + ancestorCost;
+                        childCosts.add(costFromAncestors);
+                        if (costFromAncestors % k == 0) {
+                            count++;
+                        }
+                    }
+                }
+                costStorage.put(child, childCosts);
+                parents.add(child);
             }
-            count += traverse(child, edgeFrom, edgeTo, edges, connection, goneThoughEdgeIndex, costs, clonedCostPath, deep + 1, k);
         }
 
         return count;
