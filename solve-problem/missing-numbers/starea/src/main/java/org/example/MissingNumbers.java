@@ -42,8 +42,9 @@ public class MissingNumbers {
                 result.add(entry.getKey());
             }
         }
+        result = result.stream().sorted().collect(Collectors.toList());
         long end = System.currentTimeMillis();
         System.out.println(end - start);
-        return result.stream().sorted().collect(Collectors.toList());
+        return result;
     }
 }
