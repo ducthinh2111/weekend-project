@@ -24,6 +24,7 @@ public class MissingNumbers {
     }
 
     public List<Integer> diff(List<Integer> a, List<Integer> b) {
+        long start = System.currentTimeMillis();
         Map<Integer, Integer> frequentAs = new HashMap<>();
         for (Integer i : a) {
             frequentAs.merge(i, 1, Integer::sum);
@@ -35,17 +36,14 @@ public class MissingNumbers {
 
         List<Integer> result = new ArrayList<>();
         for (Map.Entry<Integer, Integer> entry : frequentBs.entrySet()) {
-            Integer frequentA = frequentAs.get(entry.getKey());
-            if (frequentA == null) {
+            Integer frequentA = frequentAs.getOrDefault(entry.getKey(), 0);
+            int diff = entry.getValue() - frequentA;
+            if (diff > 0) {
                 result.add(entry.getKey());
-            } else {
-                int diff = entry.getValue() - frequentA;
-                if (diff > 0) {
-                    result.add(entry.getKey());
-                }
             }
         }
-
+        long end = System.currentTimeMillis();
+        System.out.println(end - start);
         return result.stream().sorted().collect(Collectors.toList());
     }
 }
