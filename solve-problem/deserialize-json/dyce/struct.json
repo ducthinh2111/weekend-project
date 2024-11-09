@@ -1,0 +1,42 @@
+{
+	"_t": "class name",
+	"primeField": "type of field read from class",
+	"objField": "recursive as root",
+	"primeArray": [
+		"type of element read from class"
+	],
+	"objArray": [{
+		"_t": "class name | undefined",
+		"otherFiels": "recursive as root"
+	}],
+	"primeMap": {
+		"key": "type of key-value pair read from class, convert key from string to wanted type"
+	},
+	"primeKeyMap": {
+		"key": {
+			"_t": "class name | undefined",
+			"otherFiels": "recursive as root"
+		}
+	},
+	"primeValueMap": {
+		"pairs": [{
+			"key": {
+				"_t": "class name | undefined",
+				"otherFiels": "recursive as root"
+			},
+			"val": "type of value read from class"
+		}]
+	},
+	"objMap": {
+		"pairs": [{
+			"key": {
+				"_t": "class name | undefined",
+				"otherFiels": "recursive as root"
+			},
+			"val": {
+				"_t": "class name | undefined",
+				"otherFiels": "recursive as root"
+			}
+		}]
+	}
+}
