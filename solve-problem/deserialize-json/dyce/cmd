@@ -13,3 +13,4 @@ then
 	fi
 fi
 echo
+rm -rf *.class

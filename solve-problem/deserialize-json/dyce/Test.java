@@ -4,8 +4,28 @@ import java.io.*;
 public class Test {
 	public static void main(String[] args) throws Exception {
 		Test ins = new Test();
-		ins.testSimpleObject();
+		ins.testArrayOfObject();
 		ins.testSimpleArray();
+		ins.testSimpleObject();
+	}
+
+	void testArrayOfObject() throws Exception {
+		Object raw = new Core().toDto(f2s("a3-arr-of-obj.json"), t(List.class, t(Blandit.class)));
+		check(raw instanceof List);
+		List<?> arr = (List)raw;
+		check(arr.size() == 2);
+		Object el;
+		Blandit obj;
+		el = arr.get(0);
+		check(el instanceof Blandit);
+		obj = (Blandit)el;
+		check(obj.getCursus());
+		check("2".equals(obj.getAc()));
+		el = arr.get(1);
+		check(el instanceof Blandit);
+		obj = (Blandit)el;
+		check(!obj.getCursus());
+		check("4".equals(obj.getAc()));
 	}
 
 	void testSimpleArray() throws Exception {
@@ -52,12 +72,20 @@ public class Test {
 		String sit;
 		Date suscipit;
 		int massa;
-
 		public String getSit(){ return sit; }
 		public Date getSuscipit(){ return suscipit; }
 		public int getMassa(){ return massa; }
 		public void setSit(String sit){ this.sit = sit; }
 		public void setSuscipit(Date suscipit){ this.suscipit = suscipit; }
 		public void setMassa(int massa){ this.massa = massa; }
+	}
+
+	static class Blandit {
+		boolean cursus;
+		String ac;
+		public boolean getCursus(){ return cursus; }
+		public String getAc(){ return ac; }
+		public void setCursus(boolean cursus){ this.cursus = cursus; }
+		public void setAc(String ac){ this.ac = ac; }
 	}
 }
