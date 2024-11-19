@@ -4,9 +4,27 @@ import java.io.*;
 public class Test {
 	public static void main(String[] args) throws Exception {
 		Test ins = new Test();
+		ins.testObjectHaveArrayField();
 		ins.testArrayOfObject();
 		ins.testSimpleArray();
 		ins.testSimpleObject();
+	}
+
+	void testObjectHaveArrayField() throws Exception {
+		Object raw = new Core().toDto(f2s("a4-objec-have-array-field.json"), t(Tempor.class));
+		check(raw instanceof Tempor);
+		Tempor obj = (Tempor)raw;
+		check(obj.getMagna() == 2);
+		raw = obj.getTellus();
+		check(raw instanceof List);
+		List<?> arr = (List)raw;
+		check(arr.size() == 2);
+		raw = arr.get(0);
+		check(raw instanceof String);
+		check("3".equals(raw));
+		raw = arr.get(1);
+		check(raw instanceof String);
+		check("4".equals(raw));
 	}
 
 	void testArrayOfObject() throws Exception {
@@ -87,5 +105,14 @@ public class Test {
 		public String getAc(){ return ac; }
 		public void setCursus(boolean cursus){ this.cursus = cursus; }
 		public void setAc(String ac){ this.ac = ac; }
+	}
+
+	static class Tempor {
+		int magna;
+		List<String> tellus;
+		public int getMagna(){ return magna; }
+		public List<String> getTellus(){ return tellus; }
+		public void setMagna(int magna){ this.magna = magna; }
+		public void setTellus(List<String> tellus){ this.tellus = tellus; }
 	}
 }

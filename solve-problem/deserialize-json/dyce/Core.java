@@ -1,14 +1,26 @@
 import java.util.*;
+import java.lang.reflect.*;
 import java.util.Map.Entry;
 import com.google.gson.*;
 
 public class Core {
+	private LinkedList<String> trace;
 
 	private static final Object NOPE = new Object(){};
 
 	public Object toDto(String json, Tipe tipe) throws Exception {
 		JsonElement je = JsonParser.parseString(json);
-		return readJe(je, tipe);
+		trace = new LinkedList<>();
+		try {
+			return readJe(je, tipe);
+		} catch(Exception e) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("die at [");
+			for (int i = trace.size()-1; i>=0; i--)
+				sb.append('.').append(trace.get(i));
+			sb.append("]");
+			throw new Error(sb.toString(), e);
+		}
 	}
 
 	Object readJe(JsonElement je, Tipe tip) throws Exception {
@@ -22,9 +34,12 @@ public class Core {
 		for (Entry<String, JsonElement> en: jo.entrySet()) {
 			String field = en.getKey();
 			if ("_t".equals(field)) continue;
-			Class<?> ftype = tip.base.getMethod(preG(field)).getReturnType();
-			Object val = readJe(en.getValue(), t(ftype));
-			tip.base.getMethod(preS(field), ftype).invoke(obj, val);
+			trace.push(field);
+			Type gent = tip.base.getMethod(preG(field)).getGenericReturnType();
+			Tipe ftype = Tipe.of(gent);
+			Object val = readJe(en.getValue(), ftype);
+			tip.base.getMethod(preS(field), ftype.base).invoke(obj, val);
+			trace.pop();
 		}
 		return obj;
 	}
@@ -61,8 +76,13 @@ public class Core {
 	@SuppressWarnings("unchecked")
 	Object readArr(JsonArray ja, Tipe tip) throws Exception {
 		ArrayList arr = new ArrayList(ja.size());
-		for (JsonElement i: ja.asList())
+		int idx = 0;
+		for (JsonElement i: ja.asList()) {
+			trace.push(idx + "");
 			arr.add( readJe(i, tip.args[0]) );
+			trace.pop();
+			idx++;
+		}
 		return arr;
 	}
 
@@ -83,5 +103,15 @@ public class Core {
 		boolean isArray() {
 			return base == List.class;
 		}
+		static Tipe of(Type t) {
+			if (t instanceof Class)
+				return new Tipe((Class)t, null);
+			throw new Error("not supported type: " + t.getClass());
+		}
+	}
+
+	static class Error extends RuntimeException {
+		Error(String msg) { super(msg); }
+		Error(String msg, Exception e) { super(msg, e); }
 	}
 }
