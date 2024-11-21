@@ -106,7 +106,19 @@ public class Core {
 		static Tipe of(Type t) {
 			if (t instanceof Class)
 				return new Tipe((Class)t, null);
-			throw new Error("not supported type: " + t.getClass());
+			if (t instanceof ParameterizedType) {
+				ParameterizedType p = (ParameterizedType)t;
+				Type rt = p.getRawType();
+				Type[] args = p.getActualTypeArguments();
+				if (!(rt instanceof Class)) {
+					throw new Error("unsupported raw: " + rt.getClass());
+				}
+				Tipe[] tips = new Tipe[args.length];
+				for (int i = 0; i < args.length; i++)
+					tips[i] = Tipe.of(args[i]);
+				return new Tipe((Class)rt, tips);
+			}
+			throw new Error("unsupported type: " + t.getClass());
 		}
 	}
 
