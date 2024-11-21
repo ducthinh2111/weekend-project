@@ -1,42 +1,50 @@
 {
-	"_t": "class name",
-	"primeField": "type of field read from class",
-	"objField": "recursive as root",
+	"note:0": "`if needed` is when type of obj different from the declarative type in class",
+	"note:1": "in case an object appear twice or more in the struct, put it in ref-store",
+	"_t": "type of root if needed",
+	"primeField": "read type from class",
+	"objField": {
+		"...": "repeat as root"
+	},
 	"primeArray": [
-		"type of element read from class"
+		"read type of element from class"
 	],
 	"objArray": [{
-		"_t": "class name | undefined",
-		"otherFiels": "recursive as root"
+		"_t": "type of individual element if needed",
+		"...": "repeat as root"
 	}],
 	"primeMap": {
-		"key": "type of key-value pair read from class, convert key from string to wanted type"
+		"key": "read type of key/value from class, convert key from string to actual type"
 	},
 	"primeKeyMap": {
 		"key": {
-			"_t": "class name | undefined",
-			"otherFiels": "recursive as root"
+			"_t": "type of individual value if needed",
+			"...": "repeat as root"
 		}
 	},
 	"primeValueMap": {
-		"pairs": [{
-			"key": {
-				"_t": "class name | undefined",
-				"otherFiels": "recursive as root"
-			},
-			"val": "type of value read from class"
-		}]
+		"_ref:0": "read type of key/value from class, look-up key obj from ref-store"
 	},
 	"objMap": {
-		"pairs": [{
-			"key": {
-				"_t": "class name | undefined",
-				"otherFiels": "recursive as root"
-			},
-			"val": {
-				"_t": "class name | undefined",
-				"otherFiels": "recursive as root"
+		"_ref:1": {
+			"_t": "type of values if needed",
+			"...": "repeat as root"
+		}
+	},
+	"_ref": {
+		"_ref:0": {
+			"_t": "type of ref obj if needed"
+		}
+	},
+	"arrayAsRoot": [
+		"note:3: first element will be use as _t if present",
+		"_t:typ of root if needed",
+		"note:4: last element will be use as ref-store if present",
+		[
+			"_ref",
+			{
+				"_ref:1": {}
 			}
-		}]
-	}
+		]
+	]
 }

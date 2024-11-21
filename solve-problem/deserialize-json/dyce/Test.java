@@ -4,12 +4,21 @@ import java.io.*;
 public class Test {
 	public static void main(String[] args) throws Exception {
 		Test ins = new Test();
+		ins.testObjectInObject();
 		ins.testObjectHaveArrayField();
 		ins.testArrayOfObject();
 		ins.testSimpleArray();
 		ins.testSimpleObject();
 	}
 
+	void testObjectInObject() throws Exception {
+		Object raw = new Core().toDto(f2s("a5-obj-in-obj.json"), t(Mollis.class));
+		check(raw instanceof Mollis);
+		Mollis obj = (Mollis)raw;
+		check(1732182249050L == obj.getDiam().getTime());
+		check(2 == obj.getLobortis().getEuismod());
+		check("3".equals(obj.getLobortis().getCongue()));
+	}
 	void testObjectHaveArrayField() throws Exception {
 		Object raw = new Core().toDto(f2s("a4-objec-have-array-field.json"), t(Tempor.class));
 		check(raw instanceof Tempor);
@@ -114,5 +123,23 @@ public class Test {
 		public List<String> getTellus(){ return tellus; }
 		public void setMagna(int magna){ this.magna = magna; }
 		public void setTellus(List<String> tellus){ this.tellus = tellus; }
+	}
+
+	public static class Mollis {
+		Date diam;
+		public Date getDiam() { return diam; }
+		public void setDiam(Date v) { diam=v; }
+		Hendrerit lobortis;
+		public Hendrerit getLobortis() { return lobortis; }
+		public void setLobortis(Hendrerit v) { lobortis=v; }
+	}
+
+	public static class Hendrerit {
+		int euismod;
+		public int getEuismod() { return euismod; }
+		public void setEuismod(int v) { euismod=v; }
+		String congue;
+		public String getCongue() { return congue; }
+		public void setCongue(String v) { congue=v; }
 	}
 }

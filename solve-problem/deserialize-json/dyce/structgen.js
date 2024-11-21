@@ -2,7 +2,7 @@
 	var inc = 0;
 	var verbose = 0;
 	var depth = rand();
-	var root = {};
+	var root = { name: genName() };
 	var rack = [root];
 	verbose && console.log("scan depth: ", depth);
 	for (var i = 0; i < depth; i++) {
@@ -26,13 +26,14 @@
 			}
 			if (flat && i != depth - 1) {
 				verbose && console.log("de-flat");
-				var l = {};
+				var l = { name: genName() };
 				var f = genName();
 				b[f] = l;
 				verbose && console.log("gen: ", f);
 				verbose && console.log("to rack: ", f);
 				sub.push(l);
 			}
+			genClass(b);
 		}
 		rack = sub;
 	}
@@ -44,7 +45,7 @@
 		inc++;
 		switch(Math.floor(Math.random()*5)) {
 			case 0:
-				return leaf ? inc : {};
+				return leaf ? inc : { name: genName() };
 			case 1:
 				return inc;
 			case 2:
@@ -78,5 +79,38 @@
 			arr[i] = tmp;
 		}
 		window.names = arr;
+	}
+	function genClass(obj) {
+		var uname = upName(obj.name);
+		delete obj.name;
+		var txt = "public static class "+uname+" {\n";
+		var entries = Object.entries(obj);
+		for (var i = 0; i < entries.length; i++) {
+			var fie = entries[i][0];
+			var val = entries[i][1];
+			var type = getType(val);
+			var ufie = upName(fie);
+			txt += "    "+type+" "+fie+";\n";
+			txt += "    public "+type+" get"+ufie+"() { return "+fie+"; }\n";
+			txt += "    public void set"+ufie+"("+type+" v) { "+fie+"=v; }\n";
+		}
+		txt += "}";
+		console.log(txt);
+	}
+	function getType(v) {
+		switch(typeof v) {
+			case "boolean": return "boolean";
+			case "string": return "String";
+			case "number":
+				if ((Date.now() - v) < 300)
+					return "Date";
+				else return "int";
+			case "object":
+				return upName(v.name);
+		}
+		return "<unknown>"
+	}
+	function upName(n) {
+		return n.charAt(0).toUpperCase() + n.substring(1);
 	}
 })()
