@@ -4,6 +4,8 @@ import java.io.*;
 public class Test {
 	public static void main(String[] args) throws Exception {
 		Test ins = new Test();
+
+		ins.testArrayInArray();
 		ins.testObjectInObject();
 		ins.testObjectHaveArrayField();
 		ins.testArrayOfObject();
@@ -11,29 +13,49 @@ public class Test {
 		ins.testSimpleObject();
 	}
 
+	void testArrayInArray() throws Exception {
+		Object raw = new Core().toDto(
+				f2s("a6-arr-in-arr.json"),
+				t(List.class, t(List.class, t(String.class))));
+		check(raw instanceof List);
+		List<?> list = (List)raw;
+		check(2 == list.size());
+		Object rSub = list.get(0);
+		check(rSub instanceof List);
+		List<?> lSub = (List)rSub;
+		check(2 == lSub.size());
+		check("13".equals(lSub.get(0)));
+		check("14".equals(lSub.get(1)));
+		rSub = list.get(1);
+		check(rSub instanceof List);
+		lSub = (List)rSub;
+		check(2 == lSub.size());
+		check("15".equals(lSub.get(0)));
+		check("16".equals(lSub.get(1)));
+	}
 	void testObjectInObject() throws Exception {
 		Object raw = new Core().toDto(f2s("a5-obj-in-obj.json"), t(Mollis.class));
 		check(raw instanceof Mollis);
 		Mollis obj = (Mollis)raw;
 		check(1732182249050L == obj.getDiam().getTime());
-		check(2 == obj.getLobortis().getEuismod());
-		check("3".equals(obj.getLobortis().getCongue()));
+		check(11 == obj.getLobortis().getEuismod());
+		check("12".equals(obj.getLobortis().getCongue()));
 	}
 	void testObjectHaveArrayField() throws Exception {
 		Object raw = new Core().toDto(f2s("a4-objec-have-array-field.json"), t(Tempor.class));
 		check(raw instanceof Tempor);
 		Tempor obj = (Tempor)raw;
-		check(obj.getMagna() == 2);
+		check(obj.getMagna() == 8);
 		raw = obj.getTellus();
 		check(raw instanceof List);
 		List<?> arr = (List)raw;
 		check(arr.size() == 2);
 		raw = arr.get(0);
 		check(raw instanceof String);
-		check("3".equals(raw));
+		check("9".equals(raw));
 		raw = arr.get(1);
 		check(raw instanceof String);
-		check("4".equals(raw));
+		check("10".equals(raw));
 	}
 
 	void testArrayOfObject() throws Exception {
@@ -47,12 +69,12 @@ public class Test {
 		check(el instanceof Blandit);
 		obj = (Blandit)el;
 		check(obj.getCursus());
-		check("2".equals(obj.getAc()));
+		check("6".equals(obj.getAc()));
 		el = arr.get(1);
 		check(el instanceof Blandit);
 		obj = (Blandit)el;
 		check(!obj.getCursus());
-		check("4".equals(obj.getAc()));
+		check("7".equals(obj.getAc()));
 	}
 
 	void testSimpleArray() throws Exception {
@@ -62,10 +84,10 @@ public class Test {
 		check(arr.size() == 2);
 		Object e = arr.get(0);
 		check(e instanceof Integer);
-		check((int)e == 11);
+		check((int)e == 4);
 		e = arr.get(1);
 		check(e instanceof Integer);
-		check((int)e == 32);
+		check((int)e == 5);
 	}
 	void testSimpleObject() throws Exception {
 		Object raw = new Core().toDto(f2s("a1-simple.json"), t(Cras.class));
