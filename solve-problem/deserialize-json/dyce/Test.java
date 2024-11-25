@@ -1,16 +1,79 @@
 import java.util.*;
 import java.io.*;
+import java.util.Map.Entry;
 
 public class Test {
 	public static void main(String[] args) throws Exception {
 		Test ins = new Test();
 
+		ins.testMapRefKey();
+		ins.testMapNumkeyObjval();
+		ins.testSimpleMap();
 		ins.testArrayInArray();
 		ins.testObjectInObject();
 		ins.testObjectHaveArrayField();
 		ins.testArrayOfObject();
 		ins.testSimpleArray();
 		ins.testSimpleObject();
+	}
+
+	void testMapRefKey() throws Exception {
+		Object raw = new Core().toDto(
+				f2s("a9-map-ref-key.json"),
+				t(Map.class, t(Viverra.class), t(String.class)));
+		check(raw instanceof Map);
+		check(2 == ((Map)raw).size());
+		Entry ent = (Entry)((Map)raw).entrySet().iterator().next();
+		check(ent.getKey() instanceof Viverra);
+		check(ent.getValue() instanceof String);
+		@SuppressWarnings("unchecked")
+		Map<Viverra, String> m = (Map)raw;
+		for (Entry<Viverra, String> ei: m.entrySet()) {
+			switch(ei.getValue()) {
+				case "24":
+					check(26 == ei.getKey().getAenean());
+					check("27".equals(ei.getKey().getPulvinar()));
+					break;
+				case "25":
+					check(28 == ei.getKey().getAenean());
+					check("29".equals(ei.getKey().getPulvinar()));
+					break;
+				default: check(false);
+			}
+		}
+	}
+
+	void testMapNumkeyObjval() throws Exception {
+		Object raw = new Core().toDto(
+				f2s("a8-map-numkey-objval.json"),
+				t(Map.class, t(Integer.class), t(Nostra.class)));
+		check(raw instanceof Map);
+		check(2 == ((Map)raw).size());
+		Entry ent = (Entry)((Map)raw).entrySet().iterator().next();
+		check(ent.getKey() instanceof Integer);
+		check(ent.getValue() instanceof Nostra);
+		@SuppressWarnings("unchecked")
+		Map<Integer, Nostra> m = (Map)raw;
+		check(m.get(20).getEfficitur());
+		check("21".equals(m.get(20).getNeque()));
+		check(!m.get(22).getEfficitur());
+		check("23".equals(m.get(22).getNeque()));
+	}
+
+	void testSimpleMap() throws Exception {
+		Object raw = new Core().toDto(
+				f2s("a7-simple-map.json"),
+				t(Map.class, t(String.class), t(Integer.class)));
+		check(raw instanceof Map);
+		check(3 == ((Map)raw).size());
+		Entry ent = (Entry)((Map)raw).entrySet().iterator().next();
+		check(ent.getKey() instanceof String);
+		check(ent.getValue() instanceof Integer);
+		@SuppressWarnings("unchecked")
+		Map<String, Integer> m = (Map)raw;
+		check(17 == m.get("purus"));
+		check(18 == m.get("cursus"));
+		check(19 == m.get("fusce"));
 	}
 
 	void testArrayInArray() throws Exception {
@@ -163,5 +226,23 @@ public class Test {
 		String congue;
 		public String getCongue() { return congue; }
 		public void setCongue(String v) { congue=v; }
+	}
+
+	public static class Nostra {
+		boolean efficitur;
+		public boolean getEfficitur() { return efficitur; }
+		public void setEfficitur(boolean v) { efficitur=v; }
+		String neque;
+		public String getNeque() { return neque; }
+		public void setNeque(String v) { neque=v; }
+	}
+
+	public static class Viverra {
+		int aenean;
+		public int getAenean() { return aenean; }
+		public void setAenean(int v) { aenean=v; }
+		String pulvinar;
+		public String getPulvinar() { return pulvinar; }
+		public void setPulvinar(String v) { pulvinar=v; }
 	}
 }

@@ -1,7 +1,7 @@
 #!/bin/bash
 echo
 echo "[i] compiling src ..."
-javac -cp gson-2.11.0.jar:. Core.java \
+javac -Xlint:unchecked -cp gson-2.11.0.jar:. Core.java \
 	&& javac -cp . Test.java
 if [ $? -eq 0 ]
 then
