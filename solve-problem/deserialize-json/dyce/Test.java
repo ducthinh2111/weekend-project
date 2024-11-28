@@ -6,6 +6,7 @@ public class Test {
 	public static void main(String[] args) throws Exception {
 		Test ins = new Test();
 
+		ins.testTNotationInArrayElement();
 		ins.testMapRefKey();
 		ins.testMapNumkeyObjval();
 		ins.testSimpleMap();
@@ -15,6 +16,21 @@ public class Test {
 		ins.testArrayOfObject();
 		ins.testSimpleArray();
 		ins.testSimpleObject();
+	}
+
+	void testTNotationInArrayElement() throws Exception {
+		Object raw = new Core().toDto(
+				f2s("b1-t-notate-in-arr-ele.json"),
+				t(List.class, t(Sapien.class)));
+		check(raw instanceof List);
+		check(((List)raw).get(0) instanceof Sapien);
+		@SuppressWarnings("unchecked")
+		List<Sapien> l = (List)raw;
+		check("30".equals(l.get(0).getFinibus()));
+		check(!l.get(0).getOrnare());
+		check("31".equals(l.get(1).getFinibus()));
+		check(l.get(1).getOrnare());
+		check(l.get(1) instanceof Sipen);
 	}
 
 	void testMapRefKey() throws Exception {
@@ -245,4 +261,13 @@ public class Test {
 		public String getPulvinar() { return pulvinar; }
 		public void setPulvinar(String v) { pulvinar=v; }
 	}
+	public static class Sapien {
+		String finibus;
+		public String getFinibus() { return finibus; }
+		public void setFinibus(String v) { finibus=v; }
+		boolean ornare;
+		public boolean getOrnare() { return ornare; }
+		public void setOrnare(boolean v) { ornare=v; }
+	}
+	public static class Sipen extends Sapien {}
 }

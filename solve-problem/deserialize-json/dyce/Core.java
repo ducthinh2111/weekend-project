@@ -27,7 +27,8 @@ public class Core {
 		}
 	}
 
-	Object readJe(JsonElement je, Tipe tip) throws Exception {
+	Object readJe(JsonElement je, Tipe tf0) throws Exception {
+		Tipe tip = readT(je, tf0);
 		Object leaf = readLeaf(je, tip.base);
 		if (leaf != NOPE)
 			return leaf;
@@ -155,6 +156,16 @@ public class Core {
 		return ref;
 	}
 
+	Tipe readT(JsonElement je, Tipe tf0) throws Exception {
+		if (je.isJsonObject()) {
+			JsonElement jt = je.getAsJsonObject().get("_t");
+			if (jt == null)
+				return tf0;
+			return Tipe.from(jt.getAsString());
+		}
+		return tf0;
+	}
+
 	public static Tipe t(Class<?> b, Tipe... ts) {
 		return new Tipe(b, ts);
 	}
@@ -162,10 +173,9 @@ public class Core {
 	public static class Tipe {
 		Class<?> base;
 		Tipe[] args;
-		Tipe (Class<?> b, Tipe[] ts) {
-			base = b;
-			args = ts;
-		}
+		short l; // layer
+		Tipe (Class<?> b, Tipe[] ts) { base=b; args=ts; }
+		Tipe (Class<?> b, Tipe[] ts, short n) { base=b; args=ts; l=n; }
 		Object newBase() throws Exception {
 			return base.getDeclaredConstructor().newInstance();
 		}
@@ -187,6 +197,79 @@ public class Core {
 				return new Tipe((Class)rt, tips);
 			}
 			throw new Error("unsupported type: " + t.getClass());
+		}
+		static Tipe from(String t) throws Exception {
+			Deque<Tipe> stack = new LinkedList<>();
+			char[] buf = new char[t.length()];
+			int bi = 0;
+			short l = 0;
+			for (int i = 0; i < buf.length; i++) {
+				char c = t.charAt(i);
+				switch(c) {
+					case '<':
+						stack.push(loadTipe(buf, bi, l));
+						bi = 0;
+						l++;
+						continue;
+					case '>':
+						LinkedList<Tipe> args = new LinkedList<>();
+						if (bi != 0)
+							args.addFirst( loadTipe(buf, bi, l) );
+						while (stack.peek().l == l)
+							args.addFirst(stack.pop());
+						stack.peek().args = args.toArray(new Tipe[args.size()]);
+						bi = 0;
+						l--;
+						continue;
+					case ',':
+						if (bi != 0)
+							stack.push(loadTipe(buf, bi, l));
+						bi = 0;
+						continue;
+					case ' ':
+						continue;
+					default:
+						buf[bi++] = c;
+						break;
+				}
+			}
+			if (!stack.isEmpty())
+				return stack.pop();
+			return loadTipe(buf, bi, (short)0);
+		}
+		static Tipe loadTipe(char[] buf, int bi, short l) throws Exception {
+			char[] dst = new char[bi];
+			System.arraycopy(buf, 0, dst, 0, bi);
+			String name = new String(dst);
+			Class<?> clazz = null;
+			switch(name) {
+				case "Boolean":
+					clazz = Boolean.class; break;
+				case "Integer":
+					clazz = Integer.class; break;
+				case "String":
+					clazz = String.class; break;
+				case "Date":
+					clazz = Date.class; break;
+				case "List":
+					clazz = List.class; break;
+				case "Map":
+					clazz = Map.class; break;
+				default:
+					clazz = Class.forName(name);
+					break;
+			}
+			return new Tipe(clazz, null, l);
+		}
+		public String toString() {
+			StringBuilder sb = new StringBuilder();
+			sb.append(base.getSimpleName());
+			if (args == null || args.length == 0)
+				return sb.toString();
+			sb.append("{ ");
+			for (int i = 0; i < args.length; i++)
+				sb.append(args[i].toString()).append(" , ");
+			return sb.append('}').toString();
 		}
 	}
 
