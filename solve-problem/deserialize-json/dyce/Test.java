@@ -6,6 +6,8 @@ public class Test {
 	public static void main(String[] args) throws Exception {
 		Test ins = new Test();
 
+		ins.testRefAsLeaf();
+		ins.testInlineTnotation();
 		ins.testTNotationInArrayElement();
 		ins.testMapRefKey();
 		ins.testMapNumkeyObjval();
@@ -16,6 +18,25 @@ public class Test {
 		ins.testArrayOfObject();
 		ins.testSimpleArray();
 		ins.testSimpleObject();
+	}
+
+	void testRefAsLeaf() throws Exception {
+		Object raw = new Core().toDto(f2s("b3-ref-as-leaf.json"), t(Nisl.class));
+		check(raw instanceof Nisl);
+		Nisl obj = (Nisl)raw;
+		check(obj.sem.ante == 33);
+		check(obj.quam.size() == 2);
+		check(obj.quam.get(0).ante == 34);
+		check(obj.quam.get(1) == obj.sem);
+	}
+
+	void testInlineTnotation() throws Exception {
+		Object raw = new Core().toDto(f2s("b2-inline-t-notation.json"), t(Litora.class));
+		check(raw instanceof Litora);
+		Litora obj = (Litora)raw;
+		check(obj.getUltrices() instanceof Boolean);
+		check(((Boolean)obj.getUltrices()));
+		check(32 == obj.getPhasellus());
 	}
 
 	void testTNotationInArrayElement() throws Exception {
@@ -270,4 +291,25 @@ public class Test {
 		public void setOrnare(boolean v) { ornare=v; }
 	}
 	public static class Sipen extends Sapien {}
+	public static class Litora {
+		Object ultrices;
+		public Object getUltrices() { return ultrices; }
+		public void setUltrices(Object v) { ultrices=v; }
+		int phasellus;
+		public int getPhasellus() { return phasellus; }
+		public void setPhasellus(int v) { phasellus=v; }
+	}
+	public static class Nisl {
+		Sagittis sem;
+		public Sagittis getSem() { return sem; }
+		public void setSem(Sagittis v) { sem=v; }
+		List<Sagittis> quam;
+		public List<Sagittis> getQuam() { return quam; }
+		public void setQuam(List<Sagittis> v) { quam=v; }
+	}
+	public static class Sagittis {
+		int ante;
+		public int getAnte() { return ante; }
+		public void setAnte(int v) { ante=v; }
+	}
 }

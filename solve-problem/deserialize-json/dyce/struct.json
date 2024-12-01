@@ -3,6 +3,7 @@
 	"note:1": "in case an object appear twice or more in the struct, put it in ref-store",
 	"_t": "type of root if needed",
 	"primeField": "read type from class",
+	"genericField": "inline _t if needed",
 	"objField": {
 		"...": "repeat as root"
 	},

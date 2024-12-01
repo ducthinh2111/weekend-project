@@ -29,7 +29,7 @@ public class Core {
 
 	Object readJe(JsonElement je, Tipe tf0) throws Exception {
 		Tipe tip = readT(je, tf0);
-		Object leaf = readLeaf(je, tip.base);
+		Object leaf = readLeaf(je, tip);
 		if (leaf != NOPE)
 			return leaf;
 		if (tip.isArray())
@@ -65,8 +65,8 @@ public class Core {
 
 	String preS(String field) { return preX("set", field); }
 
-	Object readLeaf(JsonElement je, Class<?> clazz) {
-		switch(clazz.getSimpleName()) {
+	Object readLeaf(JsonElement je, Tipe tip) throws Exception {
+		switch(tip.base.getSimpleName()) {
 			case "Boolean":
 			case "boolean":
 				return je.getAsBoolean();
@@ -77,6 +77,20 @@ public class Core {
 				return je.getAsString();
 			case "Date":
 				return new Date(je.getAsLong());
+		}
+		if (!je.isJsonPrimitive())
+			return NOPE;
+		JsonPrimitive jp = je.getAsJsonPrimitive();
+		if (!jp.isString())
+			return NOPE;
+		String txt = jp.getAsString();
+		if (txt.startsWith("_ref:"))
+			return getRef(txt, tip);
+		if (txt.startsWith("_t:")) {
+			int semi = txt.indexOf(';');
+			String type = txt.substring(3, semi);
+			String val = txt.substring(semi+1, txt.length());
+			return txt2Prim(val, Tipe.from(type));
 		}
 		return NOPE;
 	}
@@ -102,8 +116,9 @@ public class Core {
 		for (Entry<String, JsonElement> ent: jo.entrySet()) {
 			String skey = ent.getKey();
 			if ("_ref".equals(skey)) continue;
+			if ("_t".equals(skey)) continue;
 			trace.push(skey);
-			Object key = toKey(skey, tip.args[0]);
+			Object key = txt2Prim(skey, tip.args[0]);
 			Object val = readJe(ent.getValue(), tip.args[1]);
 			m.put(key, val);
 			trace.pop();
@@ -111,7 +126,7 @@ public class Core {
 		return m;
 	}
 
-	Object toKey(String skey, Tipe tip) throws Exception {
+	Object txt2Prim(String skey, Tipe tip) throws Exception {
 		switch(tip.base.getSimpleName()) {
 			case "Boolean":
 				return "true".equals(skey);
@@ -126,7 +141,7 @@ public class Core {
 		if (skey.startsWith("_ref:")) {
 			return getRef(skey, tip);
 		}
-		throw new Error("unsupported type key: " + tip.base);
+		throw new Error("unsupported inline type: " + tip.base);
 	}
 
 	JsonObject loadRefStore(JsonElement je) {
