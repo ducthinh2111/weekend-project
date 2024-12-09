@@ -1,4 +1,6 @@
-package org.example;
+package org.example.statement;
+
+import org.example.resource.Resource;
 
 import java.io.IOException;
 
@@ -47,11 +49,10 @@ public class Statement {
         }
     }
 
-    public void run() throws IOException, InterruptedException {
-        Resource resource = new Resource("Todos", "https://jsonplaceholder.typicode.com/todos");
+    public void run(Resource resource) throws IOException, InterruptedException {
         if (this.resource.equalsIgnoreCase(resource.getName())) {
             if (statementType == StatementType.SELECT) {
-                resource.call();
+                resource.call(statementType);
             }
         }
     }
