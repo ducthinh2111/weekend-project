@@ -5,6 +5,7 @@ import org.example.statement.StatementType;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Resource {
@@ -31,10 +32,11 @@ public class Resource {
         return name;
     }
 
-    public void call(StatementType statementType) throws IOException, InterruptedException {
+    public List<Map<String, Object>> call(StatementType statementType) throws IOException, InterruptedException {
         Repository repository = repositoryMap.get(statementType);
         if (repository != null) {
-            repository.call();
+            return repository.call();
         }
+        return null;
     }
 }

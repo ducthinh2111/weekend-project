@@ -9,10 +9,11 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 public class App {
-    public static void main(String[] args) throws IOException, URISyntaxException {
+    public static void main(String[] args) throws IOException, URISyntaxException, InterruptedException {
 
         Statement statement = StatementReader.read("language.txt");
         Resource resource = ResourceReader.read("resource.txt");
-        System.out.println("");
+
+        statement.run(resource);
     }
 }

@@ -1,8 +1,13 @@
 package org.example.statement;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.example.resource.Resource;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 
@@ -51,9 +56,14 @@ public class Statement {
 
     public void run(Resource resource) throws IOException, InterruptedException {
         if (this.resource.equalsIgnoreCase(resource.getName())) {
-            if (statementType == StatementType.SELECT) {
-                resource.call(statementType);
+            List<Map<String, Object>> result = resource.call(statementType);
+            if (!this.attribute.equals("*")) {
+                result = result.stream()
+                        .map(e -> Map.of(this.attribute, e.get(this.attribute)))
+                        .toList();
             }
+            ObjectMapper mapper = new ObjectMapper();
+            System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(result));
         }
     }
 }

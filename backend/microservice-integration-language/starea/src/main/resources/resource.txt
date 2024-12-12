@@ -2,12 +2,6 @@
     "name": "Todos",
     "select": {
         "url": "https://jsonplaceholder.typicode.com/todos",
-        "httpMethod": "GET",
-        "model": {
-            "userId": "number",
-            "id": "number",
-            "title": "string",
-            "completed": "boolean"
-        }
+        "httpMethod": "GET"
     }
 }

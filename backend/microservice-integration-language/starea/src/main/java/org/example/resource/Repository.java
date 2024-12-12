@@ -1,16 +1,19 @@
 package org.example.resource;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 import java.util.Map;
 
 public class Repository {
     private String url;
     private String httpMethod;
-    private Map<String, String> model;
     private final HttpClient client;
 
     public Repository() {
@@ -25,16 +28,15 @@ public class Repository {
         this.httpMethod = httpMethod;
     }
 
-    public void setModel(Map<String, String> model) {
-        this.model = model;
-    }
-
-    public void call() throws IOException, InterruptedException {
+    public List<Map<String, Object>> call() throws IOException, InterruptedException {
         HttpRequest request = buildRequest();
         if (request != null) {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.body());
+            ObjectMapper mapper = new ObjectMapper();
+            TypeReference<List<Map<String, Object>>> typeReference = new TypeReference<>() {};
+            return mapper.readValue(response.body(), typeReference);
         }
+        return null;
     }
 
     private HttpRequest buildRequest() {
