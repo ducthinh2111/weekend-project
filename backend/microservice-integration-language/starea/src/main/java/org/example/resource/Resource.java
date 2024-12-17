@@ -1,7 +1,7 @@
 package org.example.resource;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
-import org.example.statement.StatementType;
+import org.example.query.QueryType;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -11,11 +11,11 @@ import java.util.Map;
 public class Resource {
     private String name;
 
-    private Map<StatementType, Repository> repositoryMap = new HashMap<>();
+    private Map<QueryType, Repository> repositoryMap = new HashMap<>();
 
     @JsonAnySetter
     public void addRepository(String key, Repository repository) {
-        repositoryMap.put(StatementType.fromString(key), repository);
+        repositoryMap.put(QueryType.fromString(key), repository);
     }
 
     public Resource() {};
@@ -24,7 +24,7 @@ public class Resource {
         this.name = name;
     }
 
-    public void setRepositoryMap(Map<StatementType, Repository> repositoryMap) {
+    public void setRepositoryMap(Map<QueryType, Repository> repositoryMap) {
         this.repositoryMap = repositoryMap;
     }
 
@@ -32,8 +32,8 @@ public class Resource {
         return name;
     }
 
-    public List<Map<String, Object>> call(StatementType statementType) throws IOException, InterruptedException {
-        Repository repository = repositoryMap.get(statementType);
+    public List<Map<String, Object>> call(QueryType queryType) throws IOException, InterruptedException {
+        Repository repository = repositoryMap.get(queryType);
         if (repository != null) {
             return repository.call();
         }

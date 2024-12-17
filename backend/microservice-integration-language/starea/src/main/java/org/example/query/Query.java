@@ -1,8 +1,5 @@
-package org.example.statement;
+package org.example.query;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.example.resource.Resource;
 
 import java.io.IOException;
@@ -11,19 +8,19 @@ import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 
-public class Statement {
-    private final StatementType statementType;
+public class Query {
+    private final QueryType queryType;
     private final String attribute;
     private final String resource;
 
-    public Statement(StatementType statementType, String attribute, String resource) {
-        this.statementType = statementType;
+    public Query(QueryType queryType, String attribute, String resource) {
+        this.queryType = queryType;
         this.attribute = attribute;
         this.resource = resource;
     }
 
     public static class Builder {
-        private StatementType statementType;
+        private QueryType queryType;
         private String attribute;
         private String resource;
 
@@ -31,8 +28,8 @@ public class Statement {
             return new Builder();
         }
 
-        public Builder withStatementType(StatementType statementType) {
-            this.statementType = statementType;
+        public Builder withQueryType(QueryType queryType) {
+            this.queryType = queryType;
             return this;
         }
 
@@ -46,24 +43,24 @@ public class Statement {
             return this;
         }
 
-        public Statement build() {
-            requireNonNull(statementType, "statementType must not be null");
+        public Query build() {
+            requireNonNull(queryType, "queryType must not be null");
             requireNonNull(attribute, "attribute must not be null");
             requireNonNull(resource, "resource must not be null");
-            return new Statement(statementType, attribute, resource);
+            return new Query(queryType, attribute, resource);
         }
     }
 
-    public void run(Resource resource) throws IOException, InterruptedException {
+    public List<Map<String, Object>> run(Resource resource) throws IOException, InterruptedException {
         if (this.resource.equalsIgnoreCase(resource.getName())) {
-            List<Map<String, Object>> result = resource.call(statementType);
+            List<Map<String, Object>> result = resource.call(queryType);
             if (!this.attribute.equals("*")) {
                 result = result.stream()
                         .map(e -> Map.of(this.attribute, e.get(this.attribute)))
                         .toList();
             }
-            ObjectMapper mapper = new ObjectMapper();
-            System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(result));
+            return result;
         }
+        return List.of();
     }
 }

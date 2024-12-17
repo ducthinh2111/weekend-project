@@ -1,17 +1,17 @@
-package org.example.statement;
+package org.example.query;
 
-public enum StatementType {
+public enum QueryType {
     SELECT("select"),
     INSERT("insert");
 
     private final String value;
 
-    StatementType(String value) {
+    QueryType(String value) {
         this.value = value;
     }
 
-    public static StatementType fromString(String value) {
-        for (StatementType keyword : StatementType.values()) {
+    public static QueryType fromString(String value) {
+        for (QueryType keyword : QueryType.values()) {
             if (keyword.value.equalsIgnoreCase(value)) {
                 return keyword;
             }
