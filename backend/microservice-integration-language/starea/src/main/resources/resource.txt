@@ -1,7 +1,7 @@
 {
-    "name": "Todos",
+    "name": "Students",
     "select": {
-        "url": "https://jsonplaceholder.typicode.com/todos",
+        "url": "http://localhost:8080/students",
         "httpMethod": "GET"
     }
 }

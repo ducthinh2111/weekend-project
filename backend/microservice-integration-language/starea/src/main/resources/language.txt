@@ -1,3 +1,4 @@
-todos = select * from Todos
-print($todos)
-
+registrations = {
+    "studentId": "1",
+    "subjectId": "1"
+}
