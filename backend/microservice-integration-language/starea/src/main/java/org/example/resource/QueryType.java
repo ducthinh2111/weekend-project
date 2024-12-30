@@ -1,4 +1,4 @@
-package org.example.query;
+package org.example.resource;
 
 public enum QueryType {
     SELECT("select"),

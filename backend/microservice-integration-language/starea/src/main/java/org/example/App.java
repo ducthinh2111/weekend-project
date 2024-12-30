@@ -1,6 +1,6 @@
 package org.example;
 
-import org.example.reader.LanguageExecutor;
+import org.example.executor.Executor;
 import org.example.resource.Resource;
 import org.example.reader.ResourceReader;
 
@@ -33,6 +33,7 @@ public class App {
                         .toList();
                 
                 if (line.endsWith(";")) {
+                    unfinishedStatement = "";
                     statements.addAll(splitedBySemicolon);
                 } else {
                     statements.addAll(splitedBySemicolon.subList(0, splitedBySemicolon.size() - 1));
@@ -43,7 +44,7 @@ public class App {
             for (String statement : statements) {
                 String correctedStatement = statement.replaceAll(" +", " ");
                 System.out.println(correctedStatement);
-                LanguageExecutor.execute(correctedStatement, resource);
+                Executor.executeStatement(correctedStatement, resource);
             }
         }
     }

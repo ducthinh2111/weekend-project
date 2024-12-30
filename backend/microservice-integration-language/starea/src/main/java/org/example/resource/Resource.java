@@ -1,7 +1,6 @@
 package org.example.resource;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
-import org.example.query.QueryType;
 
 import java.io.IOException;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
 package org.starea.dto;
 
-public class Student {
+public record Student(String id, String name, Integer age) {
 }
