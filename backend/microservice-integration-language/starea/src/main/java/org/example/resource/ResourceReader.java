@@ -1,8 +1,7 @@
-package org.example.reader;
+package org.example.resource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.App;
-import org.example.resource.Resource;
 
 import java.io.IOException;
 import java.net.URI;

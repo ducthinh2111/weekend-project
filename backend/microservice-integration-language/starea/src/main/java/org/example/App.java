@@ -2,7 +2,7 @@ package org.example;
 
 import org.example.executor.Executor;
 import org.example.resource.Resource;
-import org.example.reader.ResourceReader;
+import org.example.resource.ResourceReader;
 
 import java.io.BufferedReader;
 import java.io.IOException;

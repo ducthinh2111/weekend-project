@@ -2,7 +2,6 @@ package org.example.executor.expression;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.example.executor.ExpressionExecutor;
 import org.example.resource.Resource;
 
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package org.example.executor;
+package org.example.executor.statement;
 
 import org.example.resource.Resource;
 

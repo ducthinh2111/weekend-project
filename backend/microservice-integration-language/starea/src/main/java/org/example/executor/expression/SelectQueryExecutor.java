@@ -1,6 +1,5 @@
 package org.example.executor.expression;
 
-import org.example.executor.ExpressionExecutor;
 import org.example.resource.QueryType;
 import org.example.resource.Resource;
 
