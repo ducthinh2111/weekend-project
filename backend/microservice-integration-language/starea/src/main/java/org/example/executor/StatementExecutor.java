@@ -3,7 +3,9 @@ package org.example.executor;
 import org.example.resource.Resource;
 
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public interface StatementExecutor {
-    void execute(String statement, Matcher matcher, Resource resource);
+    void execute(Matcher matcher, Resource resource);
+    Pattern getPattern();
 }

@@ -4,3 +4,4 @@ registrations = {
 }; 
 students = select * from Students;
 print($students);
+print($registrations);

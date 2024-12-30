@@ -6,21 +6,20 @@ import org.example.executor.StatementExecutor;
 import org.example.resource.Resource;
 import org.example.storage.Storage;
 
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PrintExecutor implements StatementExecutor {
 
+    private static final Pattern PRINT_METHOD_PATTERN = Pattern.compile("print\\((.*)\\)");
     private static final Pattern VARIABLE_PATTERN = Pattern.compile("\\$(.*)");
     
     @Override
-    public void execute(String statement, Matcher matcher, Resource resource) {
+    public void execute(Matcher matcher, Resource resource) {
         String argument = matcher.group(1);
         Matcher variableMatcher = VARIABLE_PATTERN.matcher(argument);
         if (variableMatcher.find()) {
-            List<Map<String, Object>> data = Storage.get(variableMatcher.group(1));
+            Object data = Storage.get(variableMatcher.group(1));
             ObjectMapper mapper = new ObjectMapper();
             try {
                 System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(data));
@@ -28,5 +27,10 @@ public class PrintExecutor implements StatementExecutor {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    @Override
+    public Pattern getPattern() {
+        return PRINT_METHOD_PATTERN;
     }
 }

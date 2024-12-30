@@ -7,12 +7,16 @@ import org.example.resource.Resource;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SelectQueryExecutor implements ExpressionExecutor {
+
+    private static final Pattern SELECT_QUERY_PATTERN = Pattern.compile("select (.*) from (.*)");
     
     @Override
-    public List<Map<String, Object>> execute(String statement, Matcher matcher, Resource resource) {
+    public Optional<Object> execute(Matcher matcher, Resource resource) {
         String attribute = matcher.group(1);
         String resourceName = matcher.group(2);
         if (resourceName.equalsIgnoreCase(resource.getName())) {
@@ -24,11 +28,16 @@ public class SelectQueryExecutor implements ExpressionExecutor {
                             .map(e -> Map.of(attribute, e.get(attribute)))
                             .toList();
                 }
-                return result;
+                return Optional.of(result);
             } catch (IOException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
-        return List.of();
+        return Optional.empty();
+    }
+
+    @Override
+    public Pattern getPattern() {
+        return SELECT_QUERY_PATTERN;
     }
 }

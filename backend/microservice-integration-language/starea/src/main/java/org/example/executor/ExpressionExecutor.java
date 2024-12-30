@@ -2,10 +2,11 @@ package org.example.executor;
 
 import org.example.resource.Resource;
 
-import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public interface ExpressionExecutor {
-    List<Map<String, Object>> execute(String statement, Matcher matcher, Resource resource);
+    Optional<Object> execute(Matcher matcher, Resource resource);
+    Pattern getPattern();
 }
