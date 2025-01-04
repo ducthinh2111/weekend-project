@@ -1,0 +1,51 @@
+{
+	"note:0": "`if needed` is when type of obj different from the declarative type in class",
+	"note:1": "in case an object appear twice or more in the struct, put it in ref-store",
+	"_t": "type of root if needed",
+	"primeField": "read type from class",
+	"genericField": "inline _t if needed",
+	"objField": {
+		"...": "repeat as root"
+	},
+	"primeArray": [
+		"read type of element from class"
+	],
+	"objArray": [{
+		"_t": "type of individual element if needed",
+		"...": "repeat as root"
+	}],
+	"primeMap": {
+		"key": "read type of key/value from class, convert key from string to actual type"
+	},
+	"primeKeyMap": {
+		"key": {
+			"_t": "type of individual value if needed",
+			"...": "repeat as root"
+		}
+	},
+	"primeValueMap": {
+		"_ref:0": "read type of key/value from class, look-up key obj from ref-store"
+	},
+	"objMap": {
+		"_ref:1": {
+			"_t": "type of values if needed",
+			"...": "repeat as root"
+		}
+	},
+	"_ref": {
+		"_ref:0": {
+			"_t": "type of ref obj if needed"
+		}
+	},
+	"arrayAsRoot": [
+		"note:3: first element will be use as _t if present",
+		"_t:typ of root if needed",
+		"note:4: last element will be use as ref-store if present",
+		[
+			"_ref",
+			{
+				"_ref:1": {}
+			}
+		]
+	]
+}

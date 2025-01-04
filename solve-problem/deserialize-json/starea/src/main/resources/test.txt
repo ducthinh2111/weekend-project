@@ -1,0 +1,11 @@
+{
+	"type": "java.util.List<org.example.Student>",
+	"value": [
+	    {
+            "id": 123,
+            "name": "Student 1",
+            "clazz": "1A",
+            "gender": "nu"
+	    }
+	]
+}
