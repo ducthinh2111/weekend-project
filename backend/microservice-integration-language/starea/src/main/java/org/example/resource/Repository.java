@@ -1,7 +1,9 @@
 package org.example.resource;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.exception.TechnicalException;
 
 import java.io.IOException;
 import java.net.URI;
@@ -9,7 +11,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
-import java.util.Map;
 
 public class Repository {
     private String url;
@@ -25,26 +26,48 @@ public class Repository {
     }
 
     public void setHttpMethod(String httpMethod) {
+        if (!List.of("GET", "POST").contains(httpMethod)) {
+            throw new TechnicalException(httpMethod + " is a supported http method");
+        }
         this.httpMethod = httpMethod;
     }
 
-    public List<Map<String, Object>> call() throws IOException, InterruptedException {
+    public JsonNode call() {
         HttpRequest request = buildRequest();
-        if (request != null) {
+        return doCall(request);
+    }
+
+    public JsonNode call(Object payload) {
+        try {
+            HttpRequest request = buildRequestWithPayload(payload);
+            return doCall(request);
+        } catch (JsonProcessingException e) {
+            throw new TechnicalException("Cannot serialize payload: " + payload);
+        }
+    }
+    
+    private JsonNode doCall(HttpRequest request) {
+        try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             ObjectMapper mapper = new ObjectMapper();
-            TypeReference<List<Map<String, Object>>> typeReference = new TypeReference<>() {};
-            return mapper.readValue(response.body(), typeReference);
+            return mapper.readValue(response.body(), JsonNode.class);
+        } catch (IOException | InterruptedException e) {
+            throw new TechnicalException("Something went wrong while calling " + url, e);
         }
-        return null;
     }
 
     private HttpRequest buildRequest() {
         HttpRequest.Builder builder = HttpRequest.newBuilder();
         builder.uri(URI.create(url));
-        if (httpMethod.equals("GET")) {
-            return builder.GET().build();
-        }
-        return null;
+        return builder.GET().build();
+    }
+    
+    private HttpRequest buildRequestWithPayload(Object payload) throws JsonProcessingException {
+        HttpRequest.Builder builder = HttpRequest.newBuilder();
+        builder.uri(URI.create(url));
+        ObjectMapper mapper = new ObjectMapper();
+        HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers
+                .ofString(mapper.writeValueAsString(payload));
+        return builder.POST(body).build();
     }
 }

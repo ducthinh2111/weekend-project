@@ -14,8 +14,7 @@ public class AssignmentExecutor implements StatementExecutor {
     @Override
     public void execute(Matcher matcher, Resource resource) {
         String variable = matcher.group(1);
-        Executor.executeExpression(matcher.group(2), resource)
-                .ifPresent(result -> Storage.put(variable, result));
+        Storage.put(variable, Executor.executeExpression(matcher.group(2), resource));
     }
 
     @Override

@@ -1,15 +1,15 @@
 package org.example.resource;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.databind.JsonNode;
+import org.example.exception.TechnicalException;
 
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Resource {
+    
     private String name;
-
     private Map<QueryType, Repository> repositoryMap = new HashMap<>();
 
     @JsonAnySetter
@@ -23,19 +23,26 @@ public class Resource {
         this.name = name;
     }
 
-    public void setRepositoryMap(Map<QueryType, Repository> repositoryMap) {
-        this.repositoryMap = repositoryMap;
-    }
-
     public String getName() {
         return name;
     }
 
-    public List<Map<String, Object>> call(QueryType queryType) throws IOException, InterruptedException {
-        Repository repository = repositoryMap.get(queryType);
-        if (repository != null) {
-            return repository.call();
+    public JsonNode query() {
+        Repository repository = repositoryMap.get(QueryType.SELECT);
+        if (repository == null) {
+            throw new TechnicalException("No repository found for " + QueryType.SELECT);
         }
-        return null;
+        return repository.call();
+    }
+
+    public JsonNode query(QueryType queryType, Object payload) {
+        if (queryType == QueryType.SELECT) {
+            throw new IllegalArgumentException(QueryType.SELECT + " cannot be called with payload");
+        }
+        Repository repository = repositoryMap.get(queryType);
+        if (repository == null) {
+            throw new TechnicalException("No repository found for " + queryType);
+        }
+        return repository.call(payload);
     }
 }

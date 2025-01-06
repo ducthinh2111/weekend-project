@@ -16,6 +16,13 @@ public enum QueryType {
                 return keyword;
             }
         }
-        return null;
+        throw new IllegalArgumentException("Invalid query type: " + value);
+    }
+
+    @Override
+    public String toString() {
+        return "QueryType{" +
+                "value='" + value + '\'' +
+                '}';
     }
 }

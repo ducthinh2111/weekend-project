@@ -13,11 +13,10 @@ public class JsonExecutor implements ExpressionExecutor {
     private static final Pattern JSON_PATTERN = Pattern.compile("\\{.*}");
     
     @Override
-    public Optional<Object> execute(Matcher matcher, Resource resource) {
+    public Object execute(Matcher matcher, Resource resource) {
         ObjectMapper mapper = new ObjectMapper();
         try {
-            Object obj = mapper.readValue(matcher.group(), Object.class);
-            return Optional.of(obj);
+            return mapper.readValue(matcher.group(), Object.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

@@ -16,7 +16,7 @@ import java.util.List;
 
 public class App {
 
-    public static void main(String[] args) throws IOException, URISyntaxException, InterruptedException {
+    public static void main(String[] args) throws IOException, URISyntaxException {
         Resource resource = ResourceReader.read("resource.txt");
 
         try (InputStream inputStream = App.class.getClassLoader().getResourceAsStream("language.txt")) {

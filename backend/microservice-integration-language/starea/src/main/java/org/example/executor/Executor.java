@@ -1,6 +1,8 @@
 package org.example.executor;
 
+import org.example.exception.TechnicalException;
 import org.example.executor.expression.ExpressionExecutor;
+import org.example.executor.expression.InsertQueryExecutor;
 import org.example.executor.expression.JsonExecutor;
 import org.example.executor.expression.SelectQueryExecutor;
 import org.example.executor.statement.AssignmentExecutor;
@@ -24,6 +26,7 @@ public class Executor {
         registerStatementExecutor(new PrintExecutor());
         
         registerExpressionExecutor(new SelectQueryExecutor());
+        registerExpressionExecutor(new InsertQueryExecutor());
         registerExpressionExecutor(new JsonExecutor());
     }
     
@@ -44,14 +47,14 @@ public class Executor {
         }
     }
     
-    public static Optional<Object> executeExpression(String expression, Resource resource) {
+    public static Object executeExpression(String expression, Resource resource) {
         for (Map.Entry<Pattern, ExpressionExecutor> entry : EXPRESSION_EXECUTOR_BY_PATTERN.entrySet()) {
             Matcher expressionMatcher = entry.getKey().matcher(expression);
             if (expressionMatcher.matches()) {
                 return entry.getValue().execute(expressionMatcher, resource);
             }
         }
-        return Optional.empty();
+        throw new TechnicalException("Invalid expression: " + expression);
     }
     
 }
