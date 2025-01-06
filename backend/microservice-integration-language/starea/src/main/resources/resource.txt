@@ -1,0 +1,11 @@
+{
+    "name": "Students",
+    "select": {
+        "url": "http://localhost:8080/students",
+        "httpMethod": "GET"
+    },
+    "insert": {
+        "url": "http://localhost:8080/students",
+        "httpMethod": "POST"
+    }
+}

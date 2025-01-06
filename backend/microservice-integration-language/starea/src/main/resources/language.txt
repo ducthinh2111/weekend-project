@@ -1,0 +1,9 @@
+registrations = {
+    "studentId": "1",
+    "subjectId": "1"
+}; 
+students = select * from Students;
+createdStudents = insert into Students data $students;
+print($createdStudents);
+print($registrations);
+
