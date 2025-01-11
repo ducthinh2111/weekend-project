@@ -2,13 +2,15 @@ import java.util.Random;
 
 public class Main {
     
+    private static final Random rand = new Random();
+    
     public static void main(String[] args) {
-        int rows = 10;
-        int cols = 10;
+        int rows = 20;
+        int cols = 20;
         int startR = 0;
         int startC = 1;
         int endR = 3;
-        int endC = 9;
+        int endC = 19;
         int[][] maze = new int[rows][cols];
         
         for (int row = 0; row < rows; row++) {
@@ -21,31 +23,27 @@ public class Main {
             }
         }
         
-        int numberOfRoutes = 1;
-        while (numberOfRoutes-- > 0) {
-            int numberOfRandomPoints = 3;
-            int currentR = startR;
-            int currentC = startC;
-            while (numberOfRandomPoints-- > 0) {
-                int randomR = (int) ((Math.random() * (rows - 1 - 1)) + 1);
-                int randomC = (int) ((Math.random() * (cols - 1 - 1)) + 1);
-                System.out.println("Random point: " + randomR + " " + randomC);
-                go(currentR, currentC, randomR, randomC, rows, cols, maze);
-                currentR = randomR;
-                currentC = randomC;
-            }
-            go(currentR, currentC, endR, endC, rows, cols, maze);
+        int numberOfRandomPoints = 10;
+        int currentR = startR;
+        int currentC = startC;
+        while (numberOfRandomPoints-- > 0) {
+            int maxR = rows - 2;
+            int min = 1;
+            int randomR = rand.nextInt(maxR - min + 1) + min;
+            int maxC = cols - 2;
+            int randomC = rand.nextInt(maxC - min + 1) + min;
+            go(currentR, currentC, randomR, randomC, rows, cols, maze);
+            currentR = randomR;
+            currentC = randomC;
         }
-        
+        go(currentR, currentC, endR, endC, rows, cols, maze);
+
+        System.out.println(rows + " " + cols + " " + startC + " " + startR + " " + endC + " " + endR);
         for (int i = 0; i < rows; i++) {
-            System.out.println();
             for (int j = 0; j < cols; j++) {
-                if (maze[i][j] == 1) {
-                    System.out.print("*" + " ");
-                } else {
-                    System.out.print("." + " ");
-                }
+                System.out.print(maze[i][j] + " ");
             }
+            System.out.println();
         }
     }
 
@@ -61,29 +59,41 @@ public class Main {
                            int rows,
                            int cols,
                            int[][] maze) {
-        boolean isAllowedToGoByRow = startC != 0 && startC != cols - 1;
-        boolean isAllowedToGoByCol = startR != 0 && startR != rows - 1;
         
-        if (isAllowedToGoByRow && isAllowedToGoByCol) {
-            Random rand = new Random();
-            boolean goRowFirst = rand.nextBoolean();
-            if (goRowFirst) {
-                int[] currentPos = goRow(startR, startC, endR, endC, maze);
-                goCol(currentPos[0], currentPos[1], endR, endC, maze);
+        boolean isAllowedToGoHorizontal = 
+                startR != 0 && 
+                startR != rows - 1 &&
+                startC + (endC - startC) != 0 &&
+                startC + (endC - startC) != cols - 1;
+        boolean isAllowedToGoVertical = 
+                startC != 0 && 
+                startC != rows - 1 &&
+                startR + (endR - startR) != 0 &&
+                startR + (endR - startR) != rows - 1;
+        
+        if (isAllowedToGoVertical && isAllowedToGoHorizontal) {
+            boolean isGoVertical = rand.nextBoolean();
+            if (isGoVertical) {
+                int[] currentPos = goVertical(startR, startC, endR, endC, maze);
+                goHorizontal(currentPos[0], currentPos[1], endR, endC, maze);
             } else {
-                int[] currentPos = goCol(startR, startC, endR, endC, maze);
-                goRow(currentPos[0], currentPos[1], endR, endC, maze);
+                int[] currentPos = goHorizontal(startR, startC, endR, endC, maze);
+                goVertical(currentPos[0], currentPos[1], endR, endC, maze);
             }
-        } else if (isAllowedToGoByRow) {
-            int[] currentPos = goRow(startR, startC, endR, endC, maze);
-            goCol(currentPos[0], currentPos[1], endR, endC, maze);
-        } else {
-            int[] currentPos = goCol(startR, startC, endR, endC, maze);
-            goRow(currentPos[0], currentPos[1], endR, endC, maze);
+            return;
+        } 
+        if (isAllowedToGoVertical) {
+            int[] currentPos = goVertical(startR, startC, endR, endC, maze);
+            goHorizontal(currentPos[0], currentPos[1], endR, endC, maze);
+            return;
+        } 
+        if (isAllowedToGoHorizontal) {
+            int[] currentPos = goHorizontal(startR, startC, endR, endC, maze);
+            goVertical(currentPos[0], currentPos[1], endR, endC, maze);
         }
     }
     
-    private static int[] goRow(int startR, int startC, int endR, int endC, int[][] maze) {
+    private static int[] goVertical(int startR, int startC, int endR, int endC, int[][] maze) {
         while (startR != endR) {
             if (startR < endR) {
                 startR++;
@@ -97,7 +107,7 @@ public class Main {
         return new int[]{ startR, startC };
     }
 
-    private static int[] goCol(int startR, int startC, int endR, int endC, int[][] maze) {
+    private static int[] goHorizontal(int startR, int startC, int endR, int endC, int[][] maze) {
         while (startC != endC) {
             if (startC < endC) {
                 startC++;
