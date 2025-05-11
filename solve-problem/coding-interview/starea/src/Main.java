@@ -1,19 +1,21 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Main {
 
     public static void main(String[] args) {
-        String[][] treeStr = {
-                { "A", "B" },
-                { "A", "C" },
-                { "B", "D" },
-                { "C", "D" },
-        };
+        Scanner scanner = new Scanner(System.in);
+        String nodeStr = scanner.nextLine();
+        int nodeInfoNumber = scanner.nextInt();
+        scanner.nextLine();
+        String[][] treeStr = new String[nodeInfoNumber][2];
+        for (int i = 0; i < nodeInfoNumber; i++) {
+            String nodeInfoStr = scanner.nextLine();
+            String[] nodeInfo = nodeInfoStr.split(" ");
+            treeStr[i][0] = nodeInfo[0];
+            treeStr[i][1] = nodeInfo[1];
+        }
+        scanner.close();
         Map<String, DependencyNode> tree = createTree(treeStr);
-        String nodeStr = "A";
         List<String> compileSequence = computeCompileSequence(nodeStr, tree);
         List<String> reversed = compileSequence.reversed();
         List<String> result = new ArrayList<>();
