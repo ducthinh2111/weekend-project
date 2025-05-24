@@ -21,15 +21,29 @@ public  class DependencyChecker {
                     i++;
                 }
                 List<String> l = map.get(name);
-                Set<String> r = new LinkedHashSet<>();
+                List<String> r = replaceList(map, name);
                 r.add(name);
                 for (String s : l) {
-                    r.addAll(map.getOrDefault(s, List.of(s)));
+                    r.add(s);
+                    r.addAll(map.getOrDefault(s, List.of()));
                 }
                 List<String> a = new ArrayList<>(r);
                 Collections.reverse(a);
                 System.out.println("Result: "+ String.join(" ", a));
             }
         }
+    }
+
+    private static List<String> replaceList(Map<String, List<String>> map, String str) {
+        List<String> r = new ArrayList<>();
+        r.add(str);
+        List<String> l = map.getOrDefault(str, List.of());
+        if (l.isEmpty()) {
+            return r;
+        }
+        for (String s : l) {
+            r.addAll(replaceList(map, s));
+        }
+        return r;
     }
 }
