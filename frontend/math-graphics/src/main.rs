@@ -49,8 +49,10 @@ struct Cube {
 
 #[derive(Debug, Clone, Copy)]
 struct Screen {
-    point: Vec3,
+    top_left: Vec3,
     normal: Vec3,
+    width: f32,
+    height: f32
 }
 
 
@@ -68,23 +70,27 @@ struct Screen {
 //   y
 fn main() {
     let pin_hole = Vec3 { x: 2.0, y: 2.0, z: 2.0 };
-    let screen_point = Vec3 {
-        x: pin_hole.x,
-        y: pin_hole.y + 3.0,
-        z: pin_hole.z
+    let focal_length = 3.0;
+    let screen_width = 3.0;
+    let screen_height = 3.0;
+    let screen_point_top_left = Vec3 {
+        x: pin_hole.x - screen_width / 2.0,
+        y: pin_hole.y + focal_length,
+        z: pin_hole.z + screen_height / 2.0
     };
     let screen_normal = Vec3 {
-        x: screen_point.x,
-        y: screen_point.y + 1.0,
-        z: screen_point.z,
+        x: screen_point_top_left.x,
+        y: screen_point_top_left.y + 1.0,
+        z: screen_point_top_left.z,
     };
     let screen = Screen {
-        point: screen_point,
-        normal: screen_normal
+        top_left: screen_point_top_left,
+        normal: screen_normal,
+        width: screen_width,
+        height: screen_height
     };
 
     let cube_vertices = create_cube();
-    let mut rays: Vec<Ray> = Vec::new();
     for vertex in cube_vertices {
         let pin_hole_to_vertex = Vec3::subtract(&vertex, &pin_hole);
         let ray = Ray {
