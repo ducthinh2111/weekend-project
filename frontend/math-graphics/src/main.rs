@@ -34,6 +34,15 @@ impl Vec3 {
             z: v.z * scala
         }
     }
+
+    fn unit(&self) -> Vec3 {
+        let vec_length = (self.x.powi(2) + self.y.powi(2) + self.z.powi(2)).sqrt();
+        Vec3 {
+            x: self.x / vec_length,
+            y: self.y / vec_length,
+            z: self.z / vec_length
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -51,8 +60,8 @@ struct Cube {
 struct Screen {
     top_left: Vec3,
     normal: Vec3,
-    width: f32,
-    height: f32
+    horizontal: Vec3,
+    vertical: Vec3
 }
 
 
@@ -71,27 +80,44 @@ struct Screen {
 fn main() {
     let pin_hole = Vec3 { x: 2.0, y: 2.0, z: 2.0 };
     let focal_length = 3.0;
-    let screen_width = 3.0;
-    let screen_height = 3.0;
+    let screen_width = 10.0;
+    let screen_height = 10.0;
     let screen_point_top_left = Vec3 {
         x: pin_hole.x - screen_width / 2.0,
         y: pin_hole.y + focal_length,
-        z: pin_hole.z + screen_height / 2.0
+        z: pin_hole.z - screen_height / 2.0
     };
-    let screen_normal = Vec3 {
+
+    let direction_determine_vector = Vec3 {
         x: screen_point_top_left.x,
         y: screen_point_top_left.y + 1.0,
-        z: screen_point_top_left.z,
+        z: screen_point_top_left.z
     };
+    let screen_normal = Vec3::subtract(&direction_determine_vector, &screen_point_top_left);
+
+    let direction_determine_vector = Vec3 {
+        x: screen_point_top_left.x + 1.0,
+        y: screen_point_top_left.y,
+        z: screen_point_top_left.z
+    };
+    let screen_horizontal = Vec3::subtract(&direction_determine_vector, &screen_point_top_left);
+
+    let direction_determine_vector = Vec3 {
+        x: screen_point_top_left.x,
+        y: screen_point_top_left.y,
+        z: screen_point_top_left.z + 1.0
+    };
+    let screen_vertical = Vec3::subtract(&direction_determine_vector, &screen_point_top_left);
+
     let screen = Screen {
         top_left: screen_point_top_left,
         normal: screen_normal,
-        width: screen_width,
-        height: screen_height
+        horizontal: screen_horizontal,
+        vertical: screen_vertical
     };
 
-    let cube_vertices = create_cube();
-    for vertex in cube_vertices {
+    let cube = create_cube();
+    for vertex in cube.vertices {
         let pin_hole_to_vertex = Vec3::subtract(&vertex, &pin_hole);
         let ray = Ray {
             position: pin_hole.clone(),
@@ -99,11 +125,16 @@ fn main() {
         };
         let intersection_scalar = find_intersection(&screen, &ray);
         let intersection = Vec3::add(&ray.position, &Vec3::scale(&ray.direction, intersection_scalar));
+        let screen_top_left_to_intersection = Vec3::subtract(&intersection, &screen.top_left);
+        let horizontal_projection = Vec3::dot(&screen_top_left_to_intersection, &screen.horizontal.unit());
+        let vertical_projection = Vec3::dot(&screen_top_left_to_intersection, &screen.vertical.unit());
+        println!("Horizontal projection for vertex x:{} y:{} z:{} is {}", vertex.x, vertex.y, vertex.z, horizontal_projection);
+        println!("Vertical projection for vertex x:{} y:{} z:{} is {}", vertex.x, vertex.y, vertex.z, vertical_projection);
     }
 }
 
 fn find_intersection(screen: &Screen, ray: &Ray) -> f32 {
-    (Vec3::dot(&ray.position, &screen.normal) - Vec3::dot(&screen.point, &screen.normal)) / Vec3::dot(&ray.direction, &screen.normal)
+    (Vec3::dot(&ray.position, &screen.normal) - Vec3::dot(&screen.top_left, &screen.normal)) / Vec3::dot(&ray.direction, &screen.normal)
 }
 
 
@@ -121,7 +152,7 @@ fn find_intersection(screen: &Screen, ray: &Ray) -> f32 {
 //   y
 // ***
 // Vertex 5, 6, 7, 8 has the same order
-fn create_cube() -> [Vec3; 8] {
+fn create_cube() -> Cube {
     let vertex1 = Vec3 { x: 0.0, y: 10.0, z: 0.0 };
     let vertex2 = Vec3 { x: 4.0, y: 10.0, z: 0.0 };
     let vertex3 = Vec3 { x: 4.0, y: 10.0, z: 4.0 };
@@ -131,8 +162,10 @@ fn create_cube() -> [Vec3; 8] {
     let vertex7 = Vec3 { x: 4.0, y: 14.0, z: 4.0 };
     let vertex8 = Vec3 { x: 0.0, y: 14.0, z: 4.0 };
     
-    [
-        vertex1, vertex2, vertex3, vertex4,
-        vertex5, vertex6, vertex7, vertex8
-    ]
+    Cube {
+        vertices: [
+            vertex1, vertex2, vertex3, vertex4,
+            vertex5, vertex6, vertex7, vertex8
+        ]
+    }
 }
