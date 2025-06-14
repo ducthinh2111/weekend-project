@@ -61,7 +61,9 @@ struct Screen {
     top_left: Vec3,
     normal: Vec3,
     horizontal: Vec3,
-    vertical: Vec3
+    vertical: Vec3,
+    horizontal_length: f32,
+    vertical_length: f32
 }
 
 
@@ -80,8 +82,8 @@ struct Screen {
 fn main() {
     let pin_hole = Vec3 { x: 2.0, y: 2.0, z: 2.0 };
     let focal_length = 3.0;
-    let screen_width = 10.0;
-    let screen_height = 10.0;
+    let screen_width = 100.0;
+    let screen_height = 100.0;
     let screen_point_top_left = Vec3 {
         x: pin_hole.x - screen_width / 2.0,
         y: pin_hole.y + focal_length,
@@ -113,10 +115,14 @@ fn main() {
         top_left: screen_point_top_left,
         normal: screen_normal,
         horizontal: screen_horizontal,
-        vertical: screen_vertical
+        vertical: screen_vertical,
+        horizontal_length: screen_width,
+        vertical_length: screen_height
     };
 
     let cube = create_cube();
+    let pixels_width = 300;
+    let pixels_height = 300;
     for vertex in cube.vertices {
         let pin_hole_to_vertex = Vec3::subtract(&vertex, &pin_hole);
         let ray = Ray {
@@ -131,6 +137,8 @@ fn main() {
         println!("Horizontal projection for vertex x:{} y:{} z:{} is {}", vertex.x, vertex.y, vertex.z, horizontal_projection);
         println!("Vertical projection for vertex x:{} y:{} z:{} is {}", vertex.x, vertex.y, vertex.z, vertical_projection);
     }
+    
+    
 }
 
 fn find_intersection(screen: &Screen, ray: &Ray) -> f32 {
@@ -161,7 +169,7 @@ fn create_cube() -> Cube {
     let vertex6 = Vec3 { x: 4.0, y: 14.0, z: 0.0 };
     let vertex7 = Vec3 { x: 4.0, y: 14.0, z: 4.0 };
     let vertex8 = Vec3 { x: 0.0, y: 14.0, z: 4.0 };
-    
+
     Cube {
         vertices: [
             vertex1, vertex2, vertex3, vertex4,
