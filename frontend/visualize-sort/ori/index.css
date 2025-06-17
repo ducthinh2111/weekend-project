@@ -1,0 +1,33 @@
+#m-array-out-put {
+    display: flex;
+}
+
+.m-item {
+    padding: 10px 20px;
+    width: 10px;
+    transform: translate(0, 0);
+}
+@keyframes m-slide-up {
+  0% {
+    transition: 10s;
+    transform: translate(0, 0);
+  }
+  50% {
+    transition: 10s;
+    transform: translate(0, -50px);
+  }
+
+  100% {
+    transition: 10s;
+    transform: translate(50px, -50px);
+  }
+}
+.m-slide-up {
+    transition: 10s;
+    transform: translate(50px, -50px);
+}
+
+.m-slide-down {
+    transition: 10s;
+    transform: translate(50px, 50px);
+}
