@@ -84,35 +84,35 @@ fn main() {
     let focal_length = 3.0;
     let screen_width = 100.0;
     let screen_height = 100.0;
-    let screen_point_top_left = Vec3 {
+    let screen_top_left_position = Vec3 {
         x: pin_hole.x - screen_width / 2.0,
         y: pin_hole.y + focal_length,
         z: pin_hole.z - screen_height / 2.0
     };
 
-    let direction_determine_vector = Vec3 {
-        x: screen_point_top_left.x,
-        y: screen_point_top_left.y + 1.0,
-        z: screen_point_top_left.z
+    let screen_normal_direction_determine_vector = Vec3 {
+        x: screen_top_left_position.x,
+        y: screen_top_left_position.y + 1.0,
+        z: screen_top_left_position.z
     };
-    let screen_normal = Vec3::subtract(&direction_determine_vector, &screen_point_top_left);
+    let screen_normal = Vec3::subtract(&screen_normal_direction_determine_vector, &screen_top_left_position);
 
-    let direction_determine_vector = Vec3 {
-        x: screen_point_top_left.x + 1.0,
-        y: screen_point_top_left.y,
-        z: screen_point_top_left.z
+    let screen_horizontal_direction_determine_vector = Vec3 {
+        x: screen_top_left_position.x + 1.0,
+        y: screen_top_left_position.y,
+        z: screen_top_left_position.z
     };
-    let screen_horizontal = Vec3::subtract(&direction_determine_vector, &screen_point_top_left);
+    let screen_horizontal = Vec3::subtract(&screen_horizontal_direction_determine_vector, &screen_top_left_position);
 
-    let direction_determine_vector = Vec3 {
-        x: screen_point_top_left.x,
-        y: screen_point_top_left.y,
-        z: screen_point_top_left.z + 1.0
+    let screen_vertical_direction_determine_vector = Vec3 {
+        x: screen_top_left_position.x,
+        y: screen_top_left_position.y,
+        z: screen_top_left_position.z + 1.0
     };
-    let screen_vertical = Vec3::subtract(&direction_determine_vector, &screen_point_top_left);
+    let screen_vertical = Vec3::subtract(&screen_vertical_direction_determine_vector, &screen_top_left_position);
 
     let screen = Screen {
-        top_left: screen_point_top_left,
+        top_left: screen_top_left_position,
         normal: screen_normal,
         horizontal: screen_horizontal,
         vertical: screen_vertical,
@@ -142,8 +142,20 @@ fn main() {
 }
 
 fn find_intersection(screen: &Screen, ray: &Ray) -> f32 {
-    (Vec3::dot(&ray.position, &screen.normal) - Vec3::dot(&screen.top_left, &screen.normal)) / Vec3::dot(&ray.direction, &screen.normal)
+    // Find the scalar of the ray to a position
+    // The vector from screen top left to this position must be
+    // perpendicular to the screen normal
+    
+    // ray = position + scalar * direction
+    // screen_top_left_to_ray = ray - screen_top_left
+    // screen_top_left_to_ray.dot(screen_normal) = 0
+    // (ray - screen_top_left).dot(screen_normal) = 0
+    // (position + scalar * direction - screen_top_left).dot(screen_normal) = 0
+    // position.dot(screen_normal) + scalar * direction.dot(screen_normal) - screen_top_left.dot(screen_normal) = 0
+    // scalar = (screen_top_left.dot(screen_normal) - position.dot(screen_normal)) / direction.dot(screen_normal)
+    (Vec3::dot(&screen.top_left, &screen.normal) - Vec3::dot(&ray.position, &screen.normal)) / Vec3::dot(&ray.direction, &screen.normal)
 }
+
 
 
 
@@ -158,7 +170,7 @@ fn find_intersection(screen: &Screen, ray: &Ray) -> f32 {
 //     /
 //    /
 //   y
-// ***
+//
 // Vertex 5, 6, 7, 8 has the same order
 fn create_cube() -> Cube {
     let vertex1 = Vec3 { x: 0.0, y: 10.0, z: 0.0 };
