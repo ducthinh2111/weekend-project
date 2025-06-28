@@ -44,9 +44,7 @@ async function swap(i , j, a) {
     let x1 = div2.offsetWidth * d;
     let x2 = - (div1.offsetWidth * d);
     let css1 = "translate("+ x1 +"px, -50px)";
-    console.log("div1: " + div1.offsetLeft + " : " + x1);
     let css2 = "translate("+ x2 +"px, 50px)";
-    console.log("div2: " + div2.offsetLeft + " : " + x2);
     div1.style.transition = "2s";
     div2.style.transition = "2s";
     div1.style.transform = css1;
