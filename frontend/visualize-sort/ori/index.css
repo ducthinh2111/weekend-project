@@ -1,0 +1,9 @@
+#m-array-out-put {
+    display: flex;
+}
+
+.m-item {
+    padding: 10px 20px;
+    width: 10px;
+    transform: translate(0, 0);
+}
